@@ -72,7 +72,7 @@ function renderImportAlerts(o){
 let blocks=[],warnings=[],infos=[],selected=o.channels||[];
 const add=(level,msg)=>({level,msg});
 const has=v=>String(v??'').trim().length>0;
-const urlMatch=String(o.copy||'').match(/https?:\\/\\/[^\\s<>"']+/i);
+const urlMatch=String(o.copy||'').match(/https?:\/\/[^\s<>"']+/i);
 const link=String(o.communicationLink||urlMatch?.[0]||'').trim();
 if(!has(o.number))blocks.push('Número Hike / Nr Jornada não identificado.');
 if(!has(o.title))blocks.push('Título do caso de uso não informado.');
@@ -84,16 +84,16 @@ if(!has(o.end))warnings.push('Data de fim da comunicação ausente; confirme se 
 if(!has(o.taxonomy))warnings.push('Taxonomia não informada.');
 if(!has(o.cost))warnings.push('Centro de custo não informado.');
 if(!has(link))warnings.push('Link da comunicação não identificado. Confirme se deveria existir; se sim, preencha o campo Link da comunicação.');
-else if(/^http:\\/\\//i.test(link))warnings.push('Link usa http://. Verifique se existe versão segura https://.');
-else if(!/^https:\\/\\//i.test(link))warnings.push('Link encontrado, mas não começa com https://. Confirme se é um endereço válido e seguro.');
-if(o.copy&&/https?:\\/\\/[^\\s<>"']+/i.test(o.copy)&&!o.communicationLink)o.communicationLink=urlMatch[0].replace(/[),.;]+$/,'');
+else if(/^http:\/\//i.test(link))warnings.push('Link usa http://. Verifique se existe versão segura https://.');
+else if(!/^https:\/\//i.test(link))warnings.push('Link encontrado, mas não começa com https://. Confirme se é um endereço válido e seguro.');
+if(o.copy&&/https?:\/\/[^\s<>"']+/i.test(o.copy)&&!o.communicationLink)o.communicationLink=urlMatch[0].replace(/[),.;]+$/,'');
 if(o.architecture&&!/salesforce|sfmc|smc/i.test(o.architecture))warnings.push('Arquitetura Martech não identificada como SFMC: confirmar plataforma.');
-if(o.strategyEmail&&!/@(claro\\.com\\.br|akross\\.com\\.br)$/i.test(o.strategyEmail))warnings.push('E-mail da estratégia pode não ser corporativo: confirmar.');
-if(o.start&&/^\\d{4}-\\d{2}-\\d{2}$/.test(o.start)&&new Date(o.start+'T00:00:00')<new Date(new Date().toDateString()))warnings.push('Data de início da comunicação anterior a hoje.');
-if(o.end&&/^\\d{4}-\\d{2}-\\d{2}$/.test(o.end)&&new Date(o.end+'T00:00:00')<new Date(new Date().toDateString()))warnings.push('Data de fim da comunicação anterior a hoje.');
+if(o.strategyEmail&&!/@(claro\.com\.br|akross\.com\.br)$/i.test(o.strategyEmail))warnings.push('E-mail da estratégia pode não ser corporativo: confirmar.');
+if(o.start&&/^\d{4}-\d{2}-\d{2}$/.test(o.start)&&new Date(o.start+'T00:00:00')<new Date(new Date().toDateString()))warnings.push('Data de início da comunicação anterior a hoje.');
+if(o.end&&/^\d{4}-\d{2}-\d{2}$/.test(o.end)&&new Date(o.end+'T00:00:00')<new Date(new Date().toDateString()))warnings.push('Data de fim da comunicação anterior a hoje.');
 if(o.taxonomy){let p=parseTax(o.taxonomy),err=[];if(p.number&&o.number&&p.number!==o.number)err.push('Número Hike difere entre taxonomia e briefing.');if(p.date&&o.created&&p.date!==String(o.created).replaceAll('-',''))err.push('Data da taxonomia difere de Criado em.');if(p.cost&&o.cost&&p.cost!==o.cost)err.push('Centro de custo da taxonomia difere do campo Centro de Custo.');warnings.push(...err)}
 if(o.recurrence==='Pontual'&&o.start&&o.end&&o.start===o.end)warnings.push('Recorrência Pontual com início e fim iguais: confira vigência e atualização do segmento.');
-if(o.extraColumns&&/N\\/A/i.test(o.extraColumns)&&selected.some(c=>['SMS','RCS','Push','E-mail'].includes(c)))warnings.push('Colunas adicionais = N/A com canal que exige campos: possível retorno ao refinamento.');
+if(o.extraColumns&&/N\/A/i.test(o.extraColumns)&&selected.some(c=>['SMS','RCS','Push','E-mail'].includes(c)))warnings.push('Colunas adicionais = N/A com canal que exige campos: possível retorno ao refinamento.');
 if(selected.includes('SMS')||selected.includes('RCS')){
 if(!/telefone|celular|phone|mobile|msisdn/i.test(String(o.extraColumns||'')+' '+String(o.segment?.columns||'')))warnings.push('Canal SMS/RCS: não identifiquei coluna de telefone/celular na descrição das colunas do segmento.');
 }
